@@ -437,8 +437,45 @@ async def invoke(payload, context=None):
       customer_id (str, optional) — unique customer identifier
       session_id  (str, optional) — session identifier; generated if absent
     """
-    # TODO: Implement the agent invocation
-    pass
+    user_input = (payload or {}).get("prompt", "").strip()
+    if not user_input:
+        return "Please provide a 'prompt' in the request payload."
+    actor_id = payload.get("customer_id") or "anonymous-customer"
+    session_id = payload.get("session_id") or str(uuid.uuid4())
+
+    try:
+        memory_hook = MemoryHook(actor_id, session_id, memory_client, MEMORY_ID)
+        agent_core_browser = AgentCoreBrowser(region=REGION)
+
+        tools = [search_knowledge_base, calculate_loyalty_discount, agent_core_browser.browser]
+
+        mcp_client = MCPClient(lambda: streamable_http_client(GATEWAY_URL))
+        with mcp_client:
+            gateway_tools, token = [], None
+            while True:
+                page = mcp_client.list_tools_sync(pagination_token=token)
+                gateway_tools.extend(page)
+                token = page.pagination_token
+                if not token:
+                    break
+            tools.extend(gateway_tools)
+
+            agent = Agent(
+                model=model,
+                tools=tools,
+                hooks=[memory_hook],
+                system_prompt=SYSTEM_PROMPT.format(customer_id=actor_id),
+            )
+            response = await agent.invoke_async(user_input)
+
+        for block in response.message.get("content", []):
+            if "text" in block:
+                return block["text"]
+        return str(response)
+
+    except Exception as e:
+        logger.exception("Agent invocation failed")
+        return f"Sorry, I ran into a problem handling your request: {e}"
 
 
 # ── CLI entry point (do not modify) ──────────────────────────────────────────
