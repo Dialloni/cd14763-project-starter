@@ -47,8 +47,7 @@ logger = logging.getLogger("CSAI_Agent")
 #
 # Hint: app = BedrockAgentCoreApp()
 
-# TODO: Create the BedrockAgentCoreApp instance
-app = None  # Replace this line
+app = BedrockAgentCoreApp()
 
 
 # Suppress interactive tool-consent prompts (required in headless deployments).
@@ -64,10 +63,10 @@ os.environ["BYPASS_TOOL_CONSENT"] = "true"
 # REGION:     your AWS region, e.g. "us-east-1"
 # MEMORY_ID   format: shown in the AgentCore Memory console
 
-GATEWAY_URL = "<gateway_url>"   # TODO: Replace with your Gateway URL
-KB_ID       = "<kbid>"          # TODO: Replace with your Knowledge Base ID
-REGION      = "<region>"        # TODO: Replace with your AWS region
-MEMORY_ID   = "<mem_id>"        # TODO: Replace with your Memory ID
+GATEWAY_URL = "https://customersupportgateway-rkjdxsma5f.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp"
+KB_ID       = "1WPFY1ARI8"
+REGION      = "us-east-1"
+MEMORY_ID   = "CustomerSupportMemory-Nqj7Vb4AVY"
 
 
 # ── TODO 3 — Model and Clients ────────────────────────────────────────────────
