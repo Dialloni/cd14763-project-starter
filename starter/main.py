@@ -118,8 +118,14 @@ carriers, dates and amounts. Never invent data a tool did not return."""
 
 def get_namespaces(mem_client: MemoryClient, memory_id: str) -> Dict:
     """Return a dict mapping strategy type → namespace template string."""
-    # TODO: Implement this function
-    pass
+    strategies = mem_client.get_memory_strategies(memory_id)
+    namespaces = {}
+    for strategy in strategies:
+        # Newer API responses use "namespaceTemplates"; older ones use "namespaces".
+        templates = strategy.get("namespaceTemplates") or strategy.get("namespaces") or []
+        if templates:
+            namespaces[strategy["type"]] = templates[0]
+    return namespaces
 
 
 # ── TODO 5 — Memory Hook ──────────────────────────────────────────────────────
