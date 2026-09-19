@@ -331,16 +331,85 @@ def calculate_loyalty_discount(
     Returns:
         Full discount breakdown and final price
     """
-    # TODO: Build the code string (use an f-string to inject the arguments)
-    code = ""  # Replace with your code string
+    tier = tier.strip().capitalize()
+    product_category = product_category.strip().lower()
+
+    code = f"""
+import json, math
+
+earn_rates = {{"standard": 1, "device": 2, "fresh": 5}}
+tier_rates = {{"Silver": 0.00, "Gold": 0.10, "Platinum": 0.15}}
+
+loyalty_points = {int(loyalty_points)}
+tier = {tier!r}
+order_total = round({float(order_total)}, 2)
+product_category = {product_category!r}
+
+# Points: 100 points = $1, minimum 500, redeemed in blocks of 500,
+# and the points discount may cover at most 50% of the order.
+max_points_by_cap = int(order_total * 0.5 * 100)
+points_redeemed = min(loyalty_points, max_points_by_cap) // 500 * 500
+if points_redeemed < 500:
+    points_redeemed = 0
+points_discount = points_redeemed / 100
+
+# Tier discount applies to the subtotal after points.
+subtotal_after_points = order_total - points_discount
+tier_discount_pct = tier_rates.get(tier, 0.0)
+tier_discount = round(subtotal_after_points * tier_discount_pct, 2)
+
+final_total = round(subtotal_after_points - tier_discount, 2)
+total_savings = round(order_total - final_total, 2)
+points_earned = math.floor(final_total * earn_rates.get(product_category, 1))
+remaining_points = loyalty_points - points_redeemed
+
+print(json.dumps({{
+    "tier": tier,
+    "order_total": order_total,
+    "points_redeemed": points_redeemed,
+    "points_discount": round(points_discount, 2),
+    "tier_discount_pct": int(tier_discount_pct * 100),
+    "tier_discount": tier_discount,
+    "final_total": final_total,
+    "total_savings": total_savings,
+    "points_earned": points_earned,
+    "remaining_points": remaining_points,
+    "calculated_by": "AgentCore Code Interpreter",
+}}))
+"""
 
     try:
-        # TODO: Execute the code using code_session and return the result
-        pass
+        with code_session(REGION) as client:
+            response = client.invoke("executeCode", {
+                "code": code,
+                "language": "python",
+                "clearContext": True,
+            })
+            for event in response["stream"]:
+                if "result" in event:
+                    result = event["result"]
+                    stdout = result.get("structuredContent", {}).get("stdout") or \
+                        result["content"][0]["text"]
+                    return json.dumps(json.loads(stdout))
+        raise RuntimeError("Code Interpreter returned no result")
 
     except Exception as e:
-        # TODO: Implement fallback calculation using tier discount only
-        pass
+        # Fallback: tier discount only, no points redemption.
+        logger.error("Code Interpreter unavailable, using fallback: %s", e)
+        tier_discount_pct = {"Silver": 0.00, "Gold": 0.10, "Platinum": 0.15}.get(tier, 0.0)
+        tier_discount = round(order_total * tier_discount_pct, 2)
+        final_total = round(order_total - tier_discount, 2)
+        return json.dumps({
+            "tier": tier,
+            "order_total": round(order_total, 2),
+            "points_redeemed": 0,
+            "tier_discount_pct": int(tier_discount_pct * 100),
+            "tier_discount": tier_discount,
+            "final_total": final_total,
+            "remaining_points": loyalty_points,
+            "calculated_by": "fallback (tier discount only)",
+            "note": f"Code Interpreter unavailable: {e}",
+        })
 
 
 # ── TODO 8 — Agent Entrypoint ─────────────────────────────────────────────────
