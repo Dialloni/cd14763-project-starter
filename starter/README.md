@@ -50,7 +50,7 @@ All six scenarios passed against the deployed agent. Screenshots are in [`screen
 | 1. Order tracking | SHIPPED, UPS, TRK987654321, estimated delivery date | [test1_order_tracking.png](screenshot/test1_order_tracking.png) |
 | 2. Refund | Refund ID, Approved, $139.99, 3-5 business days | [test2_refund_processing.png](screenshot/test2_refund_processing.png) |
 | 3. Knowledge Base | Platinum: free same-day shipping, 15% discount, priority support | [test3_knowledge_base_rag.png](screenshot/test3_knowledge_base_rag.png) |
-| 4. Memory | Session `s-B` recalls "Jane" and her preference for concise responses from session `s-A` | [test4_memory_sessions_A_and_B.png](screenshot/test4_memory_sessions_A_and_B.png) |
+| 4. Memory | Session `s-B` recalls the name "Jane" and the concise-response preference from session `s-A` | [test4_memory_sessions_A_and_B.png](screenshot/test4_memory_sessions_A_and_B.png) |
 | 5. Loyalty discount | Gold, 4,250 points, $150: 4,000 points redeemed, 10% tier discount, $99.00 final, 250 points left | [test5_loyalty_discount.png](screenshot/test5_loyalty_discount.png) |
 | 6. Browser | Page title "Learn the Latest Tech Skills; Advance Your Career \| Udacity" | [test6_browser_tool.png](screenshot/test6_browser_tool.png) |
 
