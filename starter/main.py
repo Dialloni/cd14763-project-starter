@@ -79,14 +79,29 @@ MEMORY_ID   = "CustomerSupportMemory-Nqj7Vb4AVY"
 
 model_id = "global.amazon.nova-2-lite-v1:0"
 
-# TODO: Create the BedrockModel instance
-model = None  # Replace this line
+model = BedrockModel(model_id=model_id, region_name=REGION)
 
-# TODO: Create the MemoryClient instance
-memory_client = None  # Replace this line
+memory_client = MemoryClient(region_name=REGION)
 
-# TODO: Create the boto3 bedrock-agent-runtime client
-_bedrock_runtime = None  # Replace this line
+_bedrock_runtime = boto3.client("bedrock-agent-runtime", region_name=REGION)
+
+SYSTEM_PROMPT = """You are a friendly, accurate customer support assistant for an online Amazon store.
+The current customer's ID is {customer_id}.
+
+Use your tools instead of guessing:
+- Order status, tracking, customer profile or order history: use the order-tracker tools
+  (order-tracker___get_order, order-tracker___get_customer_orders, order-tracker___get_customer).
+- Refunds, refund status and return labels: use the refund-processor tools
+  (refund-processor___initiate_refund, refund-processor___check_refund_status,
+  refund-processor___get_return_label). Look up the order first so you know the refund amount.
+- Product details, return policies, warranties, loyalty tiers and benefits: use search_knowledge_base.
+- Loyalty discount maths: always use calculate_loyalty_discount, never compute it yourself.
+- Live web pages: use the browser tool (init_session, then navigate, then get_text or evaluate).
+
+If a message starts with "Customer Context:", those are facts and preferences remembered from
+earlier sessions with this customer. Use them to personalise your answer (e.g. their name and
+preferred response style). Report tool results faithfully, including IDs, tracking numbers,
+carriers, dates and amounts. Never invent data a tool did not return."""
 
 
 # ── TODO 4 — Namespace Helper ─────────────────────────────────────────────────
