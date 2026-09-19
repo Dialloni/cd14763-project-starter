@@ -1,0 +1,23 @@
+
+⚠️ Recommendation: The Starter Toolkit CLI is no longer supported.
+   Please use the AgentCore CLI (@aws/agentcore) to create, develop, and deploy agents on Amazon Bedrock AgentCore.
+   New Bedrock AgentCore features are only accessible in the AgentCore CLI.
+
+   To uninstall this starter toolkit, run: pip uninstall bedrock-agentcore-starter-toolkit
+   To install the AgentCore CLI: npm install -g @aws/agentcore
+   To import existing agents, run: agentcore import
+   Set AGENTCORE_SUPPRESS_RECOMMENDATION=1 to silence this warning.
+
+╭──────────────────────────────────────────────────────────────────── customer_support_agent ─────────────────────────────────────────────────────────────────────╮
+│ Session: dc023a77-ea70-4285-a909-b80e2eada9f1                                                                                                                   │
+│ Request ID: 105a6e46-5493-4f66-883b-604a0efefd58                                                                                                                │
+│ ARN: arn:aws:bedrock-agentcore:us-east-1:086775638304:runtime/customer_support_agent-tVDTGc6Foq                                                                 │
+│ Logs: aws logs tail /aws/bedrock-agentcore/runtimes/customer_support_agent-tVDTGc6Foq-DEFAULT --log-stream-name-prefix "2026/09/19/[runtime-logs" --follow      │
+│       aws logs tail /aws/bedrock-agentcore/runtimes/customer_support_agent-tVDTGc6Foq-DEFAULT --log-stream-name-prefix "2026/09/19/[runtime-logs" --since 1h    │
+│ GenAI Dashboard: https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#gen-ai-observability/agent-core                                                │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+Response:
+Your order **ORD-001** is **SHIPPED** via **UPS** with tracking number **TRK987654321**.  
+Estimated delivery: **September 21, 2026**.  
+Contents: 1 × Wireless Headphones Pro ($89.99).
